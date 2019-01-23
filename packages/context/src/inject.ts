@@ -431,24 +431,31 @@ function resolveByFilter(
   session?: ResolutionSession,
 ) {
   const targetType = inspectTargetType(injection);
-  if (injection.metadata && injection.metadata.decorator === '@inject.view') {
+  const decorator =
+    (injection.metadata && injection.metadata.decorator) || '@inject';
+  const targetName = ResolutionSession.describeInjection(injection)!.targetName;
+  if (decorator === '@inject.view') {
     if (targetType && targetType !== ContextView) {
-      const targetName = ResolutionSession.describeInjection(injection)!
-        .targetName;
       throw new Error(
         `The type of ${targetName} (${targetType.name}) is not ContextView`,
+      );
+    }
+  } else if (decorator === '@inject') {
+    if (targetType !== Array) {
+      throw new Error(
+        `The type of ${targetName} (${targetType.name}) is not Array`,
       );
     }
   }
   const bindingFilter = injection.bindingSelector as BindingFilter;
   const view = new ContextView(ctx, bindingFilter);
-  const watch = injection.metadata!.watch;
+  const autoOpen = injection.metadata!.autoOpen;
 
   if (targetType === Function) {
-    if (watch !== false) view.open();
+    if (autoOpen !== false) view.open();
     return view.asGetter();
   } else if (targetType === ContextView) {
-    if (watch !== false) view.open();
+    if (autoOpen !== false) view.open();
     return view;
   } else {
     return view.resolve(session);

@@ -21,7 +21,7 @@ describe('@inject.view', async () => {
   });
 
   class MyControllerWithGetter {
-    @inject.view(filterByTag('foo'), {watch: true})
+    @inject.view(filterByTag('foo'), {autoOpen: true})
     getter: Getter<string[]>;
   }
 
@@ -77,7 +77,7 @@ describe('@inject with filter function', async () => {
   });
 
   class MyControllerWithGetter {
-    @inject.getter(filterByTag('foo'), {watch: true})
+    @inject.getter(filterByTag('foo'), {autoOpen: true})
     getter: Getter<string[]>;
   }
 
@@ -91,6 +91,11 @@ describe('@inject with filter function', async () => {
   class MyControllerWithView {
     @inject(filterByTag('foo'))
     view: ContextView<string[]>;
+  }
+
+  class MyControllerWithGetter2 {
+    @inject(filterByTag('foo'), {autoOpen: true})
+    getter: Getter<string[]>;
   }
 
   it('injects as getter', async () => {
@@ -114,18 +119,24 @@ describe('@inject with filter function', async () => {
     expect(inst.values).to.eql(['BAR', 'FOO']);
   });
 
-  it('injects as a view', async () => {
+  it('refuses to inject as a view', async () => {
     ctx.bind('my-controller').toClass(MyControllerWithView);
-    const inst = await ctx.get<MyControllerWithView>('my-controller');
-    expect(inst.view).to.be.instanceOf(ContextView);
-    expect(await inst.view.values()).to.eql(['BAR', 'FOO']);
-    // Add a new binding that matches the filter
-    ctx
-      .bind('xyz')
-      .to('XYZ')
-      .tag('foo');
-    // The view picks up the new binding
-    expect(await inst.view.values()).to.eql(['BAR', 'XYZ', 'FOO']);
+    await expect(
+      ctx.get<MyControllerWithView>('my-controller'),
+    ).to.be.rejectedWith(
+      'The type of MyControllerWithView.prototype.view' +
+        ' (ContextView) is not Array',
+    );
+  });
+
+  it('refuses to inject as a getter', async () => {
+    ctx.bind('my-controller').toClass(MyControllerWithGetter2);
+    await expect(
+      ctx.get<MyControllerWithGetter2>('my-controller'),
+    ).to.be.rejectedWith(
+      'The type of MyControllerWithGetter2.prototype.getter' +
+        ' (Function) is not Array',
+    );
   });
 });
 

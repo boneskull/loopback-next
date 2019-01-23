@@ -57,7 +57,7 @@ describe('@inject.* - injects a live collection of matching bindings', async () 
   beforeEach(givenPrimeNumbers);
 
   class MyControllerWithGetter {
-    @inject.getter(filterByTag('prime'), {watch: true})
+    @inject.getter(filterByTag('prime'), {autoOpen: true})
     getter: Getter<number[]>;
   }
 

@@ -71,7 +71,8 @@ export class WidgetController {
 ```
 
 The `@inject` decorator now also accepts a binding filter function so that an
-array of values can be injected.
+array of values can be injected. If the target type is not `Array`, an error
+will be thrown.
 
 ```ts
 class MyControllerWithValues {
