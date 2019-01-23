@@ -83,7 +83,7 @@ describe('ContextView', () => {
 
   it('stops watching', async () => {
     expect(await contextView.values()).to.eql(['BAR', 'FOO']);
-    contextView.unwatch();
+    contextView.close();
     ctx.parent!.unbind('foo');
     expect(await contextView.values()).to.eql(['BAR', 'FOO']);
   });

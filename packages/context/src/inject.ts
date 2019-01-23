@@ -445,10 +445,10 @@ function resolveByFilter(
   const watch = injection.metadata!.watch;
 
   if (targetType === Function) {
-    if (watch !== false) view.watch();
+    if (watch !== false) view.open();
     return view.asGetter();
   } else if (targetType === ContextView) {
-    if (watch !== false) view.watch();
+    if (watch !== false) view.open();
     return view;
   } else {
     return view.resolve(session);

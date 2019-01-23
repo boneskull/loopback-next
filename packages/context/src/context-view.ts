@@ -39,18 +39,18 @@ export class ContextView<T = unknown> implements ContextEventListener {
   ) {}
 
   /**
-   * Start watching events from the context
+   * Start listening events from the context
    */
-  watch() {
-    debug('Start watching context %s', this.ctx.name);
+  open() {
+    debug('Start listening on changes of context %s', this.ctx.name);
     return (this._subscription = this.ctx.subscribe(this));
   }
 
   /**
-   * Stop watching events from the context
+   * Stop listening events from the context
    */
-  unwatch() {
-    debug('Stop watching context %s', this.ctx.name);
+  close() {
+    debug('Stop listening on changes of context %s', this.ctx.name);
     if (this._subscription && !this._subscription.closed) {
       this._subscription.unsubscribe();
       this._subscription = undefined;

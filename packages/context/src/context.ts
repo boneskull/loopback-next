@@ -177,7 +177,7 @@ export class Context {
    */
   createView<T = unknown>(filter: BindingFilter) {
     const view = new ContextView<T>(this, filter);
-    view.watch();
+    view.open();
     return view;
   }
 
